@@ -9,8 +9,9 @@ import (
 	"unicode/utf8"
 )
 
-//go:generate goyacc -o build/cim.go -p cim parse.go.y
+//go:generate bash -c "mkdir -p build && goyacc -o build/cim.go -p cim parse.go.y"
 //go:generate bash -c "cp *.go build && mv y.output build"
+//go:generate bash -c "cd util && go run gentypes.go && cd ../build && goimports -w ."
 //go:generate bash -c "gofmt -s -w ./build/*.go"
 //go:generate bash -c "goimports -w ./build/*.go"
 //go:generate bash -c "gofmt -s -w ./build/*.go"

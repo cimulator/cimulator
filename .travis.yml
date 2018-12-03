@@ -30,4 +30,4 @@ script:
   - git diff --exit-code
   - go tool vet .
   - go build *.go
-  - go test
+  - go test -v ./...
