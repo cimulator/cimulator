@@ -1,5 +1,10 @@
 package t
 
+import (
+	"math"
+	"strconv"
+)
+
 const {{ToUpper .Generic}} TypeKey = {{.ValGeneric}}
 
 func (i {{.Generic}}) Key() TypeKey {
@@ -19,7 +24,15 @@ func (i {{.Generic}}) Add(v Calculable) Calculable {
 		max := MaxPriority(i.Priority(), v.Priority())
 		return i.Cast(max).Add(v.Cast(max))
 	}
-	return i + v.({{.Generic}})
+	result := i + v.({{.Generic}})
+	{{ $x := .MaxGeneric }}
+	{{ if ne $x 0 }}
+	if FlagOverflow {
+		if ((i > 0 && v.({{.Generic}}) > {{.MaxGeneric}} - i) || (i < 0 && v.({{.Generic}}) < {{.MinGeneric}} - i)) {
+			panic(OverflowError)
+		}
+	}	{{ end }}
+	return result
 }
 
 func (i {{.Generic}}) Sub(v Calculable) Calculable {
@@ -27,7 +40,15 @@ func (i {{.Generic}}) Sub(v Calculable) Calculable {
 		max := MaxPriority(i.Priority(), v.Priority())
 		return i.Cast(max).Sub(v.Cast(max))
 	}
-	return i - v.({{.Generic}})
+	result := i - v.({{.Generic}})
+	{{ $x := .MaxGeneric }}
+	{{ if ne $x 0 }}
+	if FlagOverflow {
+		if ((i > 0 && -v.({{.Generic}}) > {{.MaxGeneric}} - i) || (i < 0 && -v.({{.Generic}}) < {{.MinGeneric}} - i)) {
+			panic(OverflowError)
+		}
+	}	{{end}}
+  return result
 }
 
 func (i {{.Generic}}) Cast(t TypeKey) Calculable {
@@ -40,7 +61,7 @@ func (i {{.Generic}}) Cast(t TypeKey) Calculable {
 			panic(OverflowError)
 		}
 		return ret
-	{{ end }}
+	{{end}}
 
 	default:
 		panic("Type not understood.")
