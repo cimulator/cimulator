@@ -51,3 +51,12 @@ func MaxPriority(a, b TypeKey) TypeKey {
 func (t TypeKey) String() string {
 	return TypeKeyStrings[t]
 }
+
+func FloatPriority() int {
+	for k, v := range TypeKeyStrings {
+		if "Float" == v {
+			return k
+		}
+	}
+	return -1 //not found.
+}

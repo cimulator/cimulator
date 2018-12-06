@@ -25,13 +25,14 @@ func (i {{.Generic}}) Add(v Calculable) Calculable {
 		return i.Cast(max).Add(v.Cast(max))
 	}
 	result := i + v.({{.Generic}})
-	{{ $x := .MaxGeneric }}
-	{{ if ne $x 0 }}
+	{{ $backup := .Generic }}
+	{{ if lt .PriorityGeneric .FloatPriority }}
 	if FlagOverflow {
-		if ((i > 0 && v.({{.Generic}}) > {{.MaxGeneric}} - i) || (i < 0 && v.({{.Generic}}) < {{.MinGeneric}} - i)) {
+		if ((i > 0 && v.({{$backup}}) > {{.MaxGeneric}} - i) || (i < 0 && v.({{$backup}}) < {{.MinGeneric}} - i)) {
 			panic(OverflowError)
 		}
-	}	{{ end }}
+	}
+	{{ end }}
 	return result
 }
 
@@ -41,13 +42,14 @@ func (i {{.Generic}}) Sub(v Calculable) Calculable {
 		return i.Cast(max).Sub(v.Cast(max))
 	}
 	result := i - v.({{.Generic}})
-	{{ $x := .MaxGeneric }}
-	{{ if ne $x 0 }}
+	{{ $backup := .Generic }}
+	{{ if lt .PriorityGeneric .FloatPriority }}
 	if FlagOverflow {
-		if ((i > 0 && -v.({{.Generic}}) > {{.MaxGeneric}} - i) || (i < 0 && -v.({{.Generic}}) < {{.MinGeneric}} - i)) {
+		if ((i > 0 && -v.({{$backup}}) > {{.MaxGeneric}} - i) || (i < 0 && -v.({{$backup}}) < {{.MinGeneric}} - i)) {
 			panic(OverflowError)
 		}
-	}	{{end}}
+	}
+	{{ end }}
   return result
 }
 
